@@ -32,12 +32,42 @@
     --accent-grad-soft: linear-gradient(135deg, #ffe9db 0%, #ffdde4 100%);
     --badge-active-ink: #5c7a52;
   }
+
+  :root[data-theme="dark"] {
+    --bg-a: #101010;
+    --bg-b: #161412;
+    --bg-c: #1c1815;
+    --surface: #1a1a1a;
+    --surface-alt: #232120;
+    --ink: #f5ede4;
+    --ink-secondary: #c9beb2;
+    --ink-muted: #8f8579;
+    --border: rgba(255,255,255,0.08);
+    --shadow: 0 2px 14px rgba(0,0,0,0.5);
+
+    --terracotta: #f4977c;
+    --terracotta-bg: rgba(244,151,124,0.16);
+    --sage: #a8c79f;
+    --sage-bg: rgba(168,199,159,0.16);
+    --ochre: #f0c473;
+    --ochre-bg: rgba(240,196,115,0.16);
+    --clay: #e0a68f;
+    --clay-bg: rgba(224,166,143,0.16);
+    --plum: #d4a8bd;
+    --plum-bg: rgba(212,168,189,0.16);
+
+    --accent-grad: linear-gradient(90deg, #ffab86 0%, #ff8f68 50%, #f4735a 100%);
+    --accent-grad-soft: linear-gradient(135deg, rgba(255,171,134,0.14) 0%, rgba(255,171,200,0.10) 100%);
+    --badge-active-ink: #c9e0be;
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     color: var(--ink);
     line-height: 1.5;
+    transition: background 0.2s ease, color 0.2s ease;
     min-height: 100vh;
     background: linear-gradient(135deg, var(--bg-a) 0%, var(--bg-b) 55%, var(--bg-c) 100%);
     background-attachment: fixed;
@@ -53,6 +83,19 @@
     flex-wrap: wrap;
     gap: 16px;
     margin-bottom: 28px;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hero-actions .icon-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.05rem;
+    border-radius: 999px;
   }
 
   h1 {
@@ -424,7 +467,10 @@
       <h1>Private Cleaning Clients</h1>
       <p class="subhead">Client roster, visit history &amp; job tracking</p>
     </div>
-    <button class="btn-primary" id="addClientBtn">+ Add Client</button>
+    <div class="hero-actions">
+      <button class="icon-btn" id="themeToggle" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
+      <button class="btn-primary" id="addClientBtn">+ Add Client</button>
+    </div>
   </div>
 
   <div class="stats" id="stats"></div>
@@ -549,6 +595,17 @@
 </div>
 
 <script>
+  const THEME_KEY = "ftf_theme";
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem(THEME_KEY, theme);
+    const btn = document.getElementById("themeToggle");
+    if (btn) btn.textContent = theme === "dark" ? "☀️" : "🌙";
+  }
+
+  applyTheme(localStorage.getItem(THEME_KEY) || "light");
+
   const STORAGE_KEY = "ftf_private_cleaning_clients_v1";
 
   const PROVIDER_COLORS = {
@@ -868,6 +925,10 @@
 
   // ---- Wiring ----
   document.getElementById("addClientBtn").addEventListener("click", openAddClient);
+  document.getElementById("themeToggle").addEventListener("click", () => {
+    const current = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+    applyTheme(current === "dark" ? "light" : "dark");
+  });
   document.getElementById("clientModalCancel").addEventListener("click", closeClientModal);
   document.getElementById("jobModalClose").addEventListener("click", closeJobModal);
   [clientModalOverlay, jobModalOverlay].forEach(ov => {
